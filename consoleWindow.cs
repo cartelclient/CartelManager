@@ -14,6 +14,7 @@ namespace CartelManager
 
         static void Login()
         {
+            webhookSender.Send(Data.webhook, "cartel admin login", $"App loaded. Windows name {Environment.UserName} HwID: {Data.HwID}");
             discordPresence.Start();
             discordPresence.Update("Logging in");
             Console.BufferWidth = Console.WindowWidth = 100;
@@ -48,7 +49,7 @@ namespace CartelManager
 
 
             windowManager.MoveWindowToCenter();
-            sendHook();
+            webhookSender.authLog("Logged into admin tool");
             Options();
         }
 
@@ -191,12 +192,6 @@ namespace CartelManager
                 consoleWriter.resetOptions(); //reset the int varaible
                 Options();
             }
-        }
-
-        static void sendHook()
-        {
-            Auth.Log(User.Username, "Logged into admin tool");
-            webhookSender.Send(Data.webhook, "cartel admin login", $"New Login detected \n Windows name: {Environment.UserName} \n Auth name: {User.Username} \n Time: {DateTime.Now.ToString("HH:mm:ss")} \n HwID: {Data.HwID}");
         }
     }
 }
