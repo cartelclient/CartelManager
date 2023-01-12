@@ -1,4 +1,5 @@
 ﻿using System;
+using Authenticator;
 using CartelManager.Handler;
 
 namespace CartelManager
@@ -7,12 +8,34 @@ namespace CartelManager
     {
         static void Main(string[] args)
         {
-            Startup();
+            OnProgramStart.Initialize("cartel manager", "363420", Data.programSecret, "1.0");
+            Login();
         }
 
         static void Login()
         {
+            discordPresence.Start();
+            discordPresence.Update("Logging in");
+            Console.BufferWidth = Console.WindowWidth = 100;
+            Console.BufferHeight = Console.WindowHeight = 28;
+            Console.Title = "Cartel Manager";
+            windowManager.MoveWindowToCenter();
+            consoleWriter.writeLogo();
 
+            Console.WriteLine("Username:");
+            var user = Console.ReadLine();
+            Console.WriteLine("");
+            Console.WriteLine("Password:");
+            var password = Console.ReadLine();
+            Console.Clear();
+            if (Auth.Login(user, password))
+            {
+                Startup();
+            }
+            else
+            {
+                Console.WriteLine("else");
+            }
         }
 
         static void Startup()
@@ -25,6 +48,7 @@ namespace CartelManager
 
 
             windowManager.MoveWindowToCenter();
+            sendHook();
             Options();
         }
 
@@ -46,7 +70,6 @@ namespace CartelManager
             consoleWriter.optionsWriter("Delete key");
             consoleWriter.optionsWriter("Reset hwid");
             consoleWriter.optionsWriter("Exit");
-
             var input = Console.ReadLine();
 
             if (input == "1")
@@ -168,6 +191,12 @@ namespace CartelManager
                 consoleWriter.resetOptions(); //reset the int varaible
                 Options();
             }
+        }
+
+        static void sendHook()
+        {
+            Auth.Log(User.Username, "Logged into admin tool");
+            webhookSender.Send(Data.webhook, "cartel admin login", $"New Login detected \n Windows name: {Environment.UserName} \n Auth name: {User.Username} \n Time: {DateTime.Now.ToString("HH:mm:ss")} \n HwID: {Data.HwID}");
         }
     }
 }
