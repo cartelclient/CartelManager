@@ -50,7 +50,6 @@ namespace CartelManager
 
         static void Startup()
         {
-            discordPresence.Start();
             discordPresence.Update("Idling");
 
             windowManager.MoveWindowToCenter();
