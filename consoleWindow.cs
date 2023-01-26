@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using Authenticator;
 using CartelManager.Handler;
 
@@ -9,14 +10,14 @@ namespace CartelManager
         static void Main(string[] args)
         {
             OnProgramStart.Initialize("cartel manager", "363420", Data.programSecret, "1.0");
+            discordPresence.Start();
+            discordPresence.Update("Logging in");
             Login();
         }
 
         static void Login()
         {
-            webhookSender.Send(Data.webhook, "cartel admin login", $"App loaded. Windows name {Environment.UserName} HwID: {Data.HwID}");
-            discordPresence.Start();
-            discordPresence.Update("Logging in");
+            Console.Clear();
             Console.BufferWidth = Console.WindowWidth = 100;
             Console.BufferHeight = Console.WindowHeight = 28;
             Console.Title = "Cartel Manager";
@@ -35,7 +36,15 @@ namespace CartelManager
             }
             else
             {
-                Console.WriteLine("else");
+                DialogResult dr = MessageBox.Show("Incorrect HWID or password, would you like to try again?", "cartel", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dr == DialogResult.Yes)
+                {
+                    Login();
+                }
+                else
+                {
+                    Environment.Exit(0);
+                }
             }
         }
 
@@ -43,10 +52,6 @@ namespace CartelManager
         {
             discordPresence.Start();
             discordPresence.Update("Idling");
-            Console.BufferWidth = Console.WindowWidth = 100;
-            Console.BufferHeight = Console.WindowHeight = 28;
-            Console.Title = "Cartel Manager";
-
 
             windowManager.MoveWindowToCenter();
             webhookSender.authLog("Logged into admin tool");
