@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CartelManager.Handler;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Authenticator
 {
@@ -247,7 +249,23 @@ namespace Authenticator
                 catch (Exception ex)
                 {
                     //MessageBox.Show(ex.Message, Name, MessageBoxButton.OK, MessageBoxImage.Error);
-                    Process.GetCurrentProcess().Kill();
+                    if (ex.Message.Contains("The underlying connection was closed: Could not establish trust relationship"))
+                    {
+                        DialogResult dialogResult = MessageBox.Show("The auth system's SSL key we use has expired, this will happen once every year, would you like to try to get an updated ssl key?", "cartel", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            API.updateSSLKey();
+                            Console.WriteLine();
+                            Console.WriteLine("You can send this to romance if he is unaware of the SSL key being outdated");
+                            Console.ReadLine();
+                            Environment.Exit(0);
+                        }
+                        else 
+                        {
+                            Environment.Exit(0);
+                        }
+                    }
                 }
             }
         }
@@ -896,10 +914,9 @@ namespace Authenticator
         }
         private static bool PinPublicKey(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
-            return certificate != null && certificate.GetPublicKeyString() == _key;
+            return certificate != null && certificate.GetPublicKeyString() == Data.SSLkey;
         }
-        //SSL Key, needs update once a year
-        private const string _key = "3082010A0282010100D0A2FCAC2861DF72F05EE166613656F27D3C037B985FECFCB5D943BC28B40DD9C035FFE44E16C57772312A9457E54973E15D40DF91660E2914ACE0AC3705562F32F023EBF32BC218423AE9DA1C752FD843EC0176307E1EE97EFCA50510DBBC88C4A253A9A06C7646BFB30CE86B773708D4240AB72919898387C60FB2F0B1B4E579BB5BC9DA286C348DD81A1205C1C43BF522032C0CA4226E08C2108E847670363B292E8E90D8B541C03CB11B03A13A88BCCC209D899994F8EADDF43AE8BBE63214EC4817922EC9496855D47E00CA21B533950C5401C6E31A727BC1A14F025D7F94B3DB2D4EE749B05C83A68A3EB17A4E375CD5CE16904F0CB1F8B7B8E75A86D30203010001";
+
         public static string Integrity(string filename)
         {
             string result;
