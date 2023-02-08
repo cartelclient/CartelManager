@@ -4,6 +4,8 @@ namespace CartelManager.Handler
 {
     internal class Data
     {
+        public static string SSLkey = "";
+        
         public static string webhook = "";
         public static string authKey = "";
         public static string aid = "";
