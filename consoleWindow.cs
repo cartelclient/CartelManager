@@ -9,6 +9,8 @@ namespace CartelManager
     {
         static void Main(string[] args)
         {
+            Console.Title = "Cartel Manager";
+            windowManager.MoveWindowToCenter();
             OnProgramStart.Initialize("cartel manager", "363420", Data.programSecret, "1.0");
             discordPresence.Start();
             discordPresence.Update("Logging in");
@@ -74,6 +76,7 @@ namespace CartelManager
             consoleWriter.optionsWriter("Generate key");
             consoleWriter.optionsWriter("Delete key");
             consoleWriter.optionsWriter("Reset hwid");
+            consoleWriter.optionsWriter("Show ssl key");
             consoleWriter.optionsWriter("Exit");
             var input = Console.ReadLine();
 
@@ -185,13 +188,22 @@ namespace CartelManager
                 Console.ReadLine();
             }
 
-            else if (input == "11")
+            if (input == "11")
+            {
+                Console.Clear();
+                discordPresence.Update("Displaying new SSL key");
+                Console.Clear();
+                API.updateSSLKey();
+                Console.ReadLine();
+            }
+
+            else if (input == "12")
             {
                 discordPresence.Dispose();
                 Environment.Exit(0);
             }
 
-            if (input != "1" || input != "2" || input != "3" || input != "4" || input != "5" || input != "6" || input != "7" || input != "8" || input != "9" || input != "10" || input != "11")
+            if (input != "1" || input != "2" || input != "3" || input != "4" || input != "5" || input != "6" || input != "7" || input != "8" || input != "9" || input != "10" || input != "11" || input != "12")
             {
                 consoleWriter.resetOptions(); //reset the int varaible
                 Options();
